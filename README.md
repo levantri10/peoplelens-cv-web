@@ -14,6 +14,7 @@ Website dùng **YOLOv8n CCTV v5 + ByteTrack** để nhận diện, theo dõi và
 
 - Chọn/kéo thả video MP4, WebM, MOV tùy codec trình duyệt, hoặc mở webcam sau khi cấp quyền.
 - Tự ưu tiên **WebGPU**, chuyển sang **CPU/WebAssembly** nếu không có hoặc không khởi tạo được WebGPU. Có thể chọn CPU trực tiếp.
+- Model được cung cấp sẵn trên Vercel; lần đầu trình duyệt vẫn tải model và WASM để xử lý tại thiết bị. Trang hiển thị dung lượng tải. Nếu GPU khởi tạo quá 15 giây ở một bước, ứng dụng đóng Worker đó và chuyển sang CPU bằng Worker mới.
 - Hiển thị bbox, track ID, số người, số track đang thấy, số người đồng thời cao nhất, FPS thực và biểu đồ theo thời gian.
 - Ngưỡng đếm mặc định 0,32. ByteTrack dùng thêm bbox confidence thấp để khôi phục track; mỗi phiên bắt đầu với tracker mới.
 - Tần suất phân tích tối đa 2/5/10 mẫu mỗi giây. Chỉ giữ một tác vụ inference đang chạy; thiết bị chậm lấy ít mẫu hơn, không tạo hàng đợi ảnh cũ.
@@ -52,7 +53,7 @@ vercel link
 vercel --prod
 ```
 
-Các header COOP/COEP hỗ trợ WASM nhiều luồng; CSP chỉ cho kết nối cùng origin, không dùng CDN/analytics bên ngoài. Bản production cần mở công khai ở cấu hình truy cập Vercel. Python và artifact train được loại khỏi nguồn upload Vercel bằng `.vercelignore`.
+Các header COOP/COEP giữ ứng dụng tách biệt giữa các origin; CSP chỉ cho kết nối cùng origin, không dùng CDN/analytics bên ngoài. Runtime WASM dùng một luồng để tránh kẹt khi tạo Worker lồng nhau; GPU vẫn chạy bằng WebGPU. Bản production mở công khai trong cấu hình Vercel. Python và artifact train được loại khỏi nguồn upload Vercel bằng `.vercelignore`.
 
 ## Model và kiến trúc
 

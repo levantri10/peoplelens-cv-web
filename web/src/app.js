@@ -1,11 +1,22 @@
 import { countsCsv, recordsJsonl, summary } from './session.js';
+import { RuntimeClient } from './runtime-client.js';
 
 const $ = id => document.getElementById(id);
 const statusNames = { loading: 'Đang chuẩn bị', processing: 'Đang nhận diện', live: 'Trực tiếp', completed: 'Hoàn tất', cancelled: 'Đã dừng', failed: 'Lỗi xử lý' };
 let mode = 'video', selectedFile = null, selectedURL = null, active = null, ready = false;
-let worker = null, pending = null, history = [], downloadUrls = [], cameraStream = null;
+let history = [], downloadUrls = [], cameraStream = null;
 const capture = document.createElement('canvas'), captureContext = capture.getContext('2d');
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const runtime = new RuntimeClient(() => new Worker(new URL('./inference.worker.js', import.meta.url), { type: 'module' }), {
+  onProgress(message) {
+    if (!active) return;
+    const amount = message.received && message.total ? ` ${(message.received / 1048576).toFixed(1)} / ${(message.total / 1048576).toFixed(1)} MB` : '';
+    overlay(message.message + amount);
+    $('progressArea').hidden = false; $('progressLabel').textContent = message.message;
+    if (typeof message.progress === 'number') { $('progressBar').value = message.progress; $('progressValue').textContent = message.progress + '%'; }
+    else { $('progressBar').removeAttribute('value'); $('progressValue').textContent = ''; }
+  },
+});
 
 function notice(message, kind = '') { $('notice').textContent = message; $('notice').className = 'notice ' + kind; $('notice').hidden = !message; }
 function overlay(message = '') { $('viewerOverlay').hidden = !message; $('overlayText').textContent = message; }
@@ -62,26 +73,11 @@ function drawChart(points) {
   $('chartStart').textContent = timeLabel(start); $('chartEnd').textContent = timeLabel(end);
 }
 
-function ensureWorker() {
-  if (worker) return;
-  worker = new Worker(new URL('./inference.worker.js', import.meta.url), { type: 'module' });
-  worker.onmessage = event => {
-    const message = event.data;
-    if (message.type === 'loading') { if (active) overlay(message.message + (message.progress < 100 ? ` ${message.progress}%` : '')); return; }
-    const request = pending; pending = null;
-    if (!request) { message.bitmap?.close(); return; }
-    if (message.type === 'error') request.reject(new Error(message.message)); else request.resolve(message);
-  };
-  worker.onerror = event => { const request = pending; pending = null; request?.reject(new Error(event.message || 'Không khởi động được bộ nhận diện.')); };
-}
 function callWorker(message, transfer = []) {
-  ensureWorker();
-  if (pending) return Promise.reject(new Error('Bộ nhận diện đang bận.'));
-  return new Promise((resolve, reject) => { pending = { resolve, reject }; worker.postMessage(message, transfer); });
+  if (message.type === 'init') return runtime.initialize(message);
+  return runtime.frame(message, transfer);
 }
-function terminateWorker() {
-  worker?.terminate(); worker = null; const request = pending; pending = null; request?.reject(new Error('Phiên đã dừng.'));
-}
+function terminateWorker() { runtime.close(); }
 function closeCamera() { cameraStream?.getTracks().forEach(track => track.stop()); cameraStream = null; $('cameraVideo').srcObject = null; }
 function mediaReady(video, url) {
   return new Promise((resolve, reject) => {
@@ -184,6 +180,7 @@ async function start(demo = false) {
     const engine = await callWorker({ type: 'init', confidence: run.confidence, backend: $('backendSelect').value });
     if (run.stop) return;
     run.provider = engine.provider; run.started = performance.now(); run.processing = true;
+    $('progressArea').hidden = true;
     $('deviceCaption').textContent = engine.provider === 'webgpu' ? 'GPU của thiết bị · WebGPU' : `CPU của thiết bị · ${engine.threads} luồng WASM`;
     $('modelStatus').textContent = engine.provider === 'webgpu' ? 'GPU · WebGPU đang hoạt động' : 'CPU · WebAssembly đang hoạt động';
     $('sourceLabel').textContent = (run.source_type === 'webcam' ? 'WEBCAM · ' : 'VIDEO · ') + run.name.slice(0, 45);
@@ -282,7 +279,7 @@ async function init() {
     if (!window.isSecureContext || !window.Worker || !window.OffscreenCanvas || !window.createImageBitmap || !window.WebAssembly) throw new Error('Trang cần HTTPS và trình duyệt có Worker, OffscreenCanvas và WebAssembly. Hãy dùng Chrome hoặc Edge mới.');
     const response = await fetch('/models/manifest.json'); if (!response.ok) throw new Error('Chưa có model trên website.');
     await response.json(); ready = true;
-    $('modelStatus').textContent = 'Model sẵn sàng · chạy trên thiết bị'; $('deviceCaption').textContent = navigator.gpu ? 'Tự động · ưu tiên WebGPU' : 'CPU · WebAssembly';
+    $('modelStatus').textContent = 'Model có sẵn · tải về khi bắt đầu'; $('deviceCaption').textContent = navigator.gpu ? 'Tự động · ưu tiên WebGPU' : 'CPU · WebAssembly';
     setBusy(false); listCameras();
   } catch (error) { notice(error.message, 'error'); $('modelStatus').textContent = 'Thiết bị chưa sẵn sàng'; }
 }
