@@ -155,10 +155,16 @@ async function processFrame(run, source) {
 
 async function start(demo = false) {
   if (active || (!demo && mode === 'video' && !selectedFile)) return;
+  const fpsInput = $('sampleFps'), targetFps = fpsInput.valueAsNumber;
+  fpsInput.setCustomValidity('');
+  if (!Number.isSafeInteger(targetFps) || targetFps < 1) {
+    const message = 'Nhập số khung hình mỗi giây là số nguyên từ 1 trở lên.';
+    fpsInput.setCustomValidity(message); fpsInput.reportValidity(); notice(message, 'error'); return;
+  }
   notice(''); $('player').pause(); resetMetrics();
   const run = { id: crypto.randomUUID(), name: demo ? 'Video mẫu · người đi bộ' : mode === 'video' ? selectedFile.name : 'Webcam trình duyệt',
     source_type: demo ? 'video' : mode, created_at: new Date().toISOString(), status: 'loading', confidence: Number($('confidence').value),
-    target_fps: Number($('sampleFps').value), records: [], timeline: [], stop: false, provider: null };
+    target_fps: targetFps, records: [], timeline: [], stop: false, provider: null };
   active = run; setBusy(true); badge('loading'); overlay('Đang chuẩn bị nguồn đầu vào…');
   const source = document.createElement('video'); source.muted = true; source.playsInline = true; run.source = source;
   try {
@@ -285,6 +291,7 @@ async function init() {
 }
 $('videoTab').onclick = () => setMode('video'); $('webcamTab').onclick = () => setMode('webcam');
 $('confidence').oninput = () => $('confidenceValue').textContent = Number($('confidence').value).toFixed(2);
+$('sampleFps').oninput = () => $('sampleFps').setCustomValidity('');
 for (const id of ['chooseInline', 'dropzone']) $(id).onclick = () => $('fileInput').click();
 $('fileInput').onchange = event => selectFile(event.target.files[0]);
 for (const name of ['dragenter', 'dragover']) $('dropzone').addEventListener(name, event => { event.preventDefault(); if (!active) $('dropzone').classList.add('dragover'); });
