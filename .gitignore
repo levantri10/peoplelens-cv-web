@@ -21,3 +21,6 @@ web/public/ort/
 audit/
 docs/TEST_RESULTS.md
 
+
+.vercel
+.env*

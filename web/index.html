@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f9">
+  <title>PeopleLens — Nhận diện & đếm người</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23ed7548'/%3E%3Cpath d='M7 13V7h6m6 0h6v6m0 6v6h-6m-6 0H7v-6' fill='none' stroke='white' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/src/style.css">
+  <script type="module" src="/src/app.js"></script>
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true"><defs>
+  <symbol id="i-focus" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/><circle cx="12" cy="12" r="4"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 9 5-3v12l-5-3"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="3"/><circle cx="12" cy="10.5" r="3.5"/><path d="M12 17v4m-5 0h10"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m2-17a3 3 0 0 1 0 6m2 11v-3a6 6 0 0 0-3-5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 16l4-6 4 3 6-8"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8Zm0 0v5h5M8 13h8m-8 4h6"/></symbol>
+</defs></svg>
+
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="PeopleLens trang chủ"><span class="brand-mark"><svg><use href="#i-focus"/></svg></span><span>People<span class="brand-light">Lens</span><small>VISION WORKSPACE</small></span></a>
+  <div class="workspace-label">KHÔNG GIAN LÀM VIỆC</div>
+  <nav aria-label="Điều hướng">
+    <a class="nav-item active" href="#workspace"><svg><use href="#i-grid"/></svg>Tổng quan<span class="nav-dot"></span></a>
+    <a class="nav-item" href="#history"><svg><use href="#i-clock"/></svg>Lịch sử xử lý</a>
+    <a class="nav-item" href="#privacy"><svg><use href="#i-file"/></svg>Hướng dẫn & riêng tư</a>
+  </nav>
+  <div class="sidebar-note"><span class="small-chip">YOLOv8n + ByteTrack</span><h3>Quan sát rõ hơn.<br>Đếm chính xác hơn.</h3><p>Theo dõi người trong video và camera của bạn.</p><div class="note-graphic" aria-hidden="true"><span></span><span></span><span></span><svg><use href="#i-focus"/></svg></div></div>
+  <div class="sidebar-footer"><span class="status-dot"></span>Xử lý trên thiết bị của bạn<small>PeopleLens / v2.0 · Public web</small></div>
+</aside>
+
+<main id="workspace">
+  <header class="topbar"><div><span class="breadcrumb">Không gian làm việc</span><span class="breadcrumb-sep">/</span><span>Tổng quan</span></div><div class="topbar-right"><span class="local-badge"><span class="status-dot"></span>ON-DEVICE AI</span><span class="avatar">CV</span></div></header>
+  <div class="content">
+    <section class="page-heading"><div><div class="eyebrow">PEOPLE ANALYTICS</div><h1>Nhận diện & đếm người<span>.</span></h1><p>Từ từng khung hình đến những con số có ý nghĩa.</p></div><div class="model-status" id="modelStatus"><span class="status-dot loading"></span>Đang kiểm tra model</div></section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section class="stat-grid" aria-label="Chỉ số nhận diện">
+      <article class="stat-card"><div><span class="stat-label">Người hiện tại</span><div class="stat-value" id="peopleCount">—</div><span class="stat-caption">Trong khung hình gần nhất</span></div><span class="stat-icon orange"><svg><use href="#i-users"/></svg></span></article>
+      <article class="stat-card"><div><span class="stat-label">Đang theo dõi</span><div class="stat-value" id="trackedCount">—</div><span class="stat-caption">Có ID trong khung hình</span></div><span class="stat-icon blue"><svg><use href="#i-focus"/></svg></span></article>
+      <article class="stat-card"><div><span class="stat-label">Cao nhất trong phiên</span><div class="stat-value" id="peakCount">—</div><span class="stat-caption">Số người cùng xuất hiện</span></div><span class="stat-icon green"><svg><use href="#i-chart"/></svg></span></article>
+      <article class="stat-card"><div><span class="stat-label">Tốc độ xử lý</span><div class="stat-value"><span id="fpsCount">—</span><small> FPS</small></div><span class="stat-caption" id="deviceCaption">Đang kiểm tra thiết bị</span></div><span class="stat-icon purple"><svg><use href="#i-clock"/></svg></span></article>
+    </section>
+
+    <div class="workspace-grid">
+      <section class="panel viewer-panel">
+        <div class="panel-heading"><h2><svg><use href="#i-video"/></svg>Không gian nhận diện</h2><span class="run-badge" id="runBadge">Sẵn sàng</span></div>
+        <div class="viewer" id="viewer">
+          <div class="viewer-grid" aria-hidden="true"></div>
+          <div id="emptyState" class="empty-state"><div class="scan-symbol"><span></span><svg><use href="#i-focus"/></svg></div><h3>Mọi chuyển động, trong tầm nhìn</h3><p>Tải video hoặc mở webcam để bắt đầu<br>nhận diện và theo dõi người.</p><button class="button viewer-button" id="chooseInline"><svg><use href="#i-upload"/></svg>Chọn video</button><span class="viewer-hint">MP4 ? WEBM ? MOV</span></div>
+          <video id="player" controls playsinline hidden></video>
+          <img id="preview" alt="Khung hình nhận diện mới nhất" hidden>
+          <canvas id="liveCanvas" aria-label="Kết quả nhận diện webcam" hidden></canvas>
+          <div class="viewer-topline"><span id="sourceLabel">CHƯA CÓ NGUỒN VIDEO</span><span class="viewer-corner">YOLOv8n <b>·</b> ByteTrack</span></div>
+          <div id="viewerOverlay" class="viewer-overlay" hidden><span class="spinner"></span><span id="overlayText">Đang nạp model…</span></div>
+          <div class="viewer-bottomline"><span id="frameLabel">FRAME —</span><span id="timeLabel">00:00.000</span></div>
+        </div>
+        <div class="viewer-footer"><span><span class="legend-dot"></span>Có track ID</span><span><span class="legend-dot yellow"></span>Chưa gán ID</span><span class="viewer-footer-right" id="frameDimensions">Chờ nguồn đầu vào</span></div>
+        <div id="progressArea" class="progress-area" hidden><div><span id="progressLabel">Đang xử lý</span><strong id="progressValue">0%</strong></div><progress id="progressBar" value="0" max="100"></progress></div>
+      </section>
+
+      <aside class="panel control-panel">
+        <div class="panel-heading"><h2>Nguồn đầu vào</h2><span class="step-badge">01</span></div>
+        <div class="source-tabs" role="tablist" aria-label="Chế độ nhận diện"><button id="videoTab" class="source-tab selected" role="tab" aria-selected="true"><svg><use href="#i-upload"/></svg>Video</button><button id="webcamTab" class="source-tab" role="tab" aria-selected="false"><svg><use href="#i-camera"/></svg>Webcam</button></div>
+        <div class="control-body">
+          <div id="videoControls"><input type="file" id="fileInput" accept=".mp4,.mov,.webm,.m4v" hidden><button id="dropzone" class="dropzone"><span class="upload-icon"><svg><use href="#i-upload"/></svg></span><strong id="fileName">Thả video vào đây</strong><span id="fileDetail">hoặc <em>chọn tệp từ máy</em></span><small id="uploadLimit">Giữ trong phiên · không tải lên server</small></button><button id="demoButton" class="demo-button"><svg><use href="#i-play"/></svg>Dùng thử với video mẫu<svg class="demo-arrow"><use href="#i-arrow"/></svg></button></div>
+          <div id="webcamControls" hidden><div class="camera-info"><span class="upload-icon"><svg><use href="#i-camera"/></svg></span><strong>Camera của bạn</strong><p>Cho phép trình duyệt truy cập camera khi bắt đầu.</p></div><label class="field-label" for="cameraSelect">Thiết bị camera</label><select id="cameraSelect"><option value="">Camera mặc định</option></select><p class="field-help">Camera hoạt động trên localhost hoặc website có HTTPS.</p></div>
+          <div class="settings-divider"></div>
+          <div class="setting-heading"><label class="field-label" for="confidence">Ngưỡng tin cậy</label><output id="confidenceValue" for="confidence">0.32</output></div><input id="confidence" type="range" min="0.10" max="0.90" step="0.01" value="0.32"><div class="range-labels"><span>Nhạy hơn</span><span>Chặt hơn</span></div>
+          <p class="field-help threshold-help">Chỉ đếm người có độ tin cậy từ ngưỡng này. ByteTrack duy trì ID qua các khung hình.</p>
+          <div class="browser-settings"><label class="field-label" for="backendSelect">Thiết bị xử lý</label><select id="backendSelect"><option value="auto">Tự động · ưu tiên GPU</option><option value="wasm">CPU · WebAssembly</option></select><label class="field-label" for="sampleFps">Tần suất tối đa</label><select id="sampleFps"><option value="2">2 lần / giây</option><option value="5" selected>5 lần / giây</option><option value="10">10 lần / giây</option></select><label class="record-option"><input type="checkbox" id="recordVideo"> Ghi video kết quả WebM</label></div><button id="startButton" class="button primary" disabled><svg><use href="#i-play"/></svg><span>Bắt đầu nhận diện</span></button>
+          <button id="stopButton" class="button stop" hidden><svg><use href="#i-stop"/></svg>Dừng nhận diện</button>
+          <p class="control-footnote"><svg><use href="#i-info"/></svg>Số đếm phản ánh khung hình hiện tại, không phải tổng khách duy nhất.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="insights-grid">
+      <section class="panel chart-panel"><div class="panel-heading"><div><h2>Số người theo thời gian</h2><p>Diễn biến trong phiên nhận diện</p></div><span class="chart-key"><span></span>Số người</span></div><div class="chart-wrap"><div id="chartEmpty" class="chart-empty">Dữ liệu sẽ xuất hiện khi nhận diện bắt đầu</div><svg id="chart" viewBox="0 0 760 150" role="img" aria-label="Biểu đồ số người theo thời gian" preserveAspectRatio="none"><defs><linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ed7548" stop-opacity=".2"/><stop offset="1" stop-color="#ed7548" stop-opacity=".01"/></linearGradient></defs><g id="chartGrid"></g><path id="chartArea" fill="url(#chartGradient)"/><path id="chartLine" fill="none" stroke="#ed7548" stroke-width="2.4" vector-effect="non-scaling-stroke"/></svg><div class="chart-axis"><span id="chartStart">00:00</span><span id="chartEnd">00:00</span></div></div></section>
+      <section class="panel results-panel"><div class="panel-heading"><div><h2>Kết quả phiên</h2><p>Lưu lại để phân tích hoặc tích hợp</p></div><svg class="muted-icon"><use href="#i-download"/></svg></div><div id="resultsEmpty" class="results-empty"><svg><use href="#i-file"/></svg><span>Chưa có kết quả xuất</span><small>Hoàn tất một phiên để tải dữ liệu.</small></div><div id="downloads" class="downloads" hidden><a id="downloadVideo" class="download-link" download="peoplelens-result.webm"><span class="file-tag">WEBM</span><span>Video có nhận diện<small>Bbox, ID và số người</small></span><svg><use href="#i-download"/></svg></a><div class="data-downloads"><a id="downloadCsv" class="button subtle" download>CSV <svg><use href="#i-download"/></svg></a><a id="downloadJsonl" class="button subtle" download>JSONL <svg><use href="#i-download"/></svg></a><a id="downloadSummary" class="button subtle" download>Tóm tắt <svg><use href="#i-download"/></svg></a></div></div></section>
+    </div>
+
+    <section class="panel history-panel" id="history"><div class="panel-heading"><div><h2>Lịch sử xử lý</h2><p>Các phiên tạm trong tab này · tải lại trang sẽ xóa</p></div><button id="refreshHistory" class="text-button">Làm mới ↻</button></div><div class="table-scroll"><table><thead><tr><th>NGUỒN DỮ LIỆU</th><th>THỜI GIAN</th><th>KHUNG HÌNH</th><th>CAO NHẤT</th><th>TRẠNG THÁI</th><th></th></tr></thead><tbody id="historyBody"><tr><td colspan="6" class="table-empty">Chưa có phiên xử lý. Bắt đầu với video mẫu ở trên.</td></tr></tbody></table></div></section>
+    <section id="privacy" class="privacy-note"><svg><use href="#i-info"/></svg><div><strong>Video của bạn ở trên thiết bị của bạn.</strong><p>Chọn video hoặc bật webcam để bắt đầu. Nhận diện dùng GPU khi trình duyệt hỗ trợ, tự chuyển sang CPU khi cần. Video, khung hình và kết quả chỉ giữ trong RAM của tab này, không tải lên server; hãy tải kết quả trước khi đóng hoặc tải lại trang.</p><p>Video được phân tích theo tần suất chọn; thiết bị chậm sẽ nhận ít khung hình hơn. Ngưỡng tin cậy có thể cần điều chỉnh cho camera của bạn. Ghi video WebM là tùy chọn và dùng thêm bộ nhớ. Lịch sử giữ tối đa 5 phiên gần nhất.</p><button id="clearSession" class="text-button">Xóa dữ liệu phiên</button></div></section><footer class="page-footer"><span>PeopleLens <b>·</b> On-device computer vision</span><span>YOLOv8n CCTV v5 / ByteTrack</span></footer>
+  </div>
+</main>
+<video id="cameraVideo" autoplay playsinline muted hidden></video>
+</body>
+</html>

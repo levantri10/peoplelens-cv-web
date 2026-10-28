@@ -1,0 +1,25 @@
+{
+  "name": "YOLOv8n CCTV v5",
+  "input_size": 640,
+  "classes": {
+    "0": "person"
+  },
+  "url": "/models/person-yolov8n.onnx",
+  "opset": 17,
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape": [
+    1,
+    5,
+    8400
+  ],
+  "bytes": 12746221,
+  "sha256": "c4930d0050bb853a26b82f0eb0dc442abda9d80737ae7ffa1295d0d36542bda0",
+  "source_checkpoint_sha256": "b17adc0d31269dab0f10a192947ffc683f143df7bd15cc9f166ec3ab54d43cd3",
+  "default_confidence": 0.32,
+  "onnx_max_absolute_difference": 0.0054779052734375
+}
