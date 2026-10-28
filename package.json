@@ -1,0 +1,21 @@
+{
+  "name": "peoplelens-cv-web",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config web/vite.config.js",
+    "build": "vite build --config web/vite.config.js",
+    "preview": "vite preview --config web/vite.config.js --host 127.0.0.1",
+    "test": "node --test web/tests/*.test.mjs",
+    "copy-runtime": "node web/scripts/copy-runtime.mjs",
+    "postinstall": "node web/scripts/copy-runtime.mjs"
+  },
+  "dependencies": {
+    "onnxruntime-web": "1.31.1"
+  },
+  "devDependencies": {
+    "vite": "8.3.5"
+  },
+  "engines": { "node": ">=22.12" }
+}

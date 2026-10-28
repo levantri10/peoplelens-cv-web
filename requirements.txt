@@ -1,0 +1,11 @@
+ultralytics==8.4.191
+torch==2.11.0
+torchvision==0.26.0
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
+python-multipart>=0.0.20,<1
+opencv-python>=4.10,<5
+numpy>=1.26,<3
+lap>=0.5.12,<1
+imageio-ffmpeg>=0.6,<1
+
