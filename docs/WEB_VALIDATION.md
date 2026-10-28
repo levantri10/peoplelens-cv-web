@@ -7,7 +7,9 @@ Ngày 28/10/2026.
 - Export model person-only `best.pt` từ artifact sang ONNX FP32 opset 17, input `[1,3,640,640]`, output `[1,5,8400]`.
 - ONNX checker hợp lệ. So sánh ONNX native với PyTorch trên tensor của video mẫu đạt `allclose(rtol=0.002, atol=0.003)`. Chênh lệch tuyệt đối lớn nhất khoảng 0,00548 trên các tọa độ output chưa NMS.
 - Chạy **ONNX Runtime Web 1.31.1, CPU/WASM thực** trong Node.js trên cùng input; chênh lệch tuyệt đối với Python ONNX khoảng **0,0006714**. Phát hiện 2 người trên ảnh mẫu đầu; ảnh đen trả số người bằng 0. Đây là xác nhận tương thích WASM, không phải test trình duyệt.
-- **7 bài kiểm thử JavaScript qua**: global assignment, giữ ID hai người di chuyển, khôi phục bằng detection confidence thấp, mất dấu/TTL/reset ID, NMS và letterbox, xuất số 0, và kiểm tra đường dữ liệu không có upload/persistent storage.
+- **14 bài kiểm thử JavaScript qua**: tracking/NMS/xuất dữ liệu và không upload/persistent storage; thêm handshake Worker, startup timeout, GPU bị treo tự chuyển CPU bằng Worker mới, hủy phiên đang nạp, bỏ phản hồi cũ và tái sử dụng session đã khởi tạo.
+- Luồng khởi tạo mới cài listener trước khi import runtime, có thông báo booted và không dùng top-level await trong Worker. Bản CPU dùng riêng build WASM một luồng; đã chạy model thật với `wasmBinary` nạp sẵn và đường dẫn module WASM tường minh, chênh lệch so với ONNX native vẫn khoảng 0,0006714.
+- Giao diện hiển thị số MB tải cho model và runtime; dung lượng kỳ vọng lấy từ manifest, không dựa vào Content-Length có thể đã nén của HTTP.
 - `npm run build` thành công, tạo website tĩnh trong `dist/`. Runtime vendor được host cùng origin, khóa theo package-lock.
 - CSP giữ `connect-src 'self'`; cho phép tạo hàm động vì binding Embind trong WASM asyncify của runtime dùng `new Function`. Không tải script từ CDN ngoài.
 - Đã kiểm tra cú pháp JavaScript và đối chiếu các ID HTML được controller tham chiếu.
