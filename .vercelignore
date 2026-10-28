@@ -2,6 +2,8 @@
 .venv
 .data
 .vercel
+.env
+.env.*
 node_modules
 dist
 artifacts
