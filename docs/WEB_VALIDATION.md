@@ -9,6 +9,7 @@ Ngày 28/10/2026.
 - Chạy **ONNX Runtime Web 1.31.1, CPU/WASM thực** trong Node.js trên cùng input; chênh lệch tuyệt đối với Python ONNX khoảng **0,0006714**. Phát hiện 2 người trên ảnh mẫu đầu; ảnh đen trả số người bằng 0. Đây là xác nhận tương thích WASM, không phải test trình duyệt.
 - **7 bài kiểm thử JavaScript qua**: global assignment, giữ ID hai người di chuyển, khôi phục bằng detection confidence thấp, mất dấu/TTL/reset ID, NMS và letterbox, xuất số 0, và kiểm tra đường dữ liệu không có upload/persistent storage.
 - `npm run build` thành công, tạo website tĩnh trong `dist/`. Runtime vendor được host cùng origin, khóa theo package-lock.
+- CSP giữ `connect-src 'self'`; cho phép tạo hàm động vì binding Embind trong WASM asyncify của runtime dùng `new Function`. Không tải script từ CDN ngoài.
 - Đã kiểm tra cú pháp JavaScript và đối chiếu các ID HTML được controller tham chiếu.
 
 ## Phạm vi chưa xác minh
