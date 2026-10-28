@@ -17,7 +17,7 @@ Website dùng **YOLOv8n CCTV v5 + ByteTrack** để nhận diện, theo dõi và
 - Model được cung cấp sẵn trên Vercel; lần đầu trình duyệt vẫn tải model và WASM để xử lý tại thiết bị. Trang hiển thị dung lượng tải. Nếu GPU khởi tạo quá 15 giây ở một bước, ứng dụng đóng Worker đó và chuyển sang CPU bằng Worker mới.
 - Hiển thị bbox, track ID, số người, số track đang thấy, số người đồng thời cao nhất, FPS thực và biểu đồ theo thời gian.
 - Ngưỡng đếm mặc định 0,32. ByteTrack dùng thêm bbox confidence thấp để khôi phục track; mỗi phiên bắt đầu với tracker mới.
-- Tần suất phân tích tối đa 2/5/10 mẫu mỗi giây. Chỉ giữ một tác vụ inference đang chạy; thiết bị chậm lấy ít mẫu hơn, không tạo hàng đợi ảnh cũ.
+- Tự nhập số khung hình muốn phân tích mỗi giây, ví dụ 30, 60 hoặc 120; không có mức trần 10 FPS trong giao diện. Giá trị phải là số nguyên từ 1 trở lên. Chỉ giữ một tác vụ inference đang chạy; tốc độ thực tế phụ thuộc thiết bị và video, không tạo hàng đợi ảnh cũ.
 - Tải CSV, JSONL và tóm tắt JSON. Tùy chọn ghi video WebM bằng MediaRecorder, hoàn toàn trong trình duyệt.
 - Có video OpenCV mẫu 5 giây để thử nhanh.
 
